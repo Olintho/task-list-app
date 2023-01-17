@@ -13,14 +13,13 @@ export default function Private({ children }) {
                 // check if user logged
                 if (user) {
                     const userData = {
-                        uid: user.displayName,
+                        uid: user.uid,
                         email: user.email
                     }
 
                     localStorage.setItem("@userDetail", JSON.stringify(userData))
-
-
-
+                    setLoading(false)
+                    setSigned(true)
                 } else {
                     setLoading(false)
                     setSigned(false)
@@ -33,14 +32,13 @@ export default function Private({ children }) {
     }, [])
 
     if (loading) {
-        return(
-            <div></div>
+        return (
+            <div>aqui</div>
         )
-    } 
+    }
     if (!signed) {
         return <Navigate to={"/"} />
-        
     }
 
-    return children
+    return children;
 }
