@@ -40,7 +40,7 @@ export default function Admin() {
                     snapshot.forEach((doc) => {
                         lista.push({
                             id: doc.id,
-                            tarefa: doc.data().tarefa,
+                            description: doc.data().description,
                             userUid: doc.data().userUid
                         })
                     })
@@ -70,9 +70,10 @@ export default function Admin() {
         }
 
         await addDoc(collection(db, "tarefas"), {
-            tarefa: tarefaInput,
+            description: tarefaInput,
             created: new Date(),
             userUid: user?.uid,
+            finished: null
         })
             .then(() => {
                 console.log("Tarefa Registrada")
@@ -91,7 +92,7 @@ export default function Admin() {
         await signOut(auth)
     }
 
-    function editTarefa(item) {
+    function editTask(item) {
         setTarefaInput(item.tarefa)
         setEdit(item)
 
@@ -115,7 +116,7 @@ export default function Admin() {
 
     }
 
-    async function deletarTarefa(id) {
+    async function finishTask(id) {
 
         const docRef = doc(db, "tarefas", id)
         await deleteDoc(docRef)
@@ -143,10 +144,10 @@ export default function Admin() {
             {tarefas.map((item) => (
 
                 <article key={item.id} className='list'>
-                    <p>{item.tarefa}</p>
+                    <p>{item.description}</p>
                     <div>
-                        <button onClick={() => editTarefa(item)}>Editar</button>
-                        <button className='btn-delete' onClick={() => deletarTarefa(item.id)}>Concluir</button>
+                        <button onClick={() => editTask(item)}>Editar</button>
+                        <button className='btn-finish' onClick={() => finishTask(item.id)}>Concluir</button>
                     </div>
                 </article>
 
