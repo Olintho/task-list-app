@@ -50,12 +50,22 @@
     border-radius: 30px;
     border: 0;
     font-weight: bold;
-    background-color: rgba(219, 38,41, 0.35);
+    background-color: rgba(219, 38, 41, 0.35);
     color: #fafafa;
-    transition:  all 0.5s;
+    transition: all 0.5s;
 }
 
 .btn-logout:hover {
     background-color: rgba(219, 38, 41, 1);
     color: #fff;
+}
+
+hr {
+    height: 2px;
+    width: 90%;
+    border-width: 5;
+    color: rgb(177, 40, 40);
+    background-color: rgb(240, 148, 11);
+    bottom: 100px;
+
 }

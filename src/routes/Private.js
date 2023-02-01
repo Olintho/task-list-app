@@ -33,7 +33,7 @@ export default function Private({ children }) {
 
     if (loading) {
         return (
-            <div>aqui</div>
+            <div>Carregando...</div>
         )
     }
     if (!signed) {

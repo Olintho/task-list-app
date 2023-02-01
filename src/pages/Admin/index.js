@@ -12,7 +12,6 @@ import {
     orderBy,
     where,
     doc,
-    deleteDoc,
     updateDoc
 } from 'firebase/firestore'
 
@@ -32,30 +31,32 @@ export default function Admin() {
             if (userDetail) {
                 const data = JSON.parse(userDetail)
                 const tarefaRef = collection(db, "tarefas")
-                const q = query(tarefaRef, orderBy("created", "desc"), where("userUid", "==", data?.uid))
-
-                const unsub = onSnapshot(q, (snapshot) => {
+                const q1 = query(tarefaRef, orderBy("created", "desc"), where("userUid", "==", data?.uid), where("finished", "==", null))
+                const unsub = onSnapshot(q1, (snapshot) => {
                     let lista = []
 
                     snapshot.forEach((doc) => {
                         lista.push({
                             id: doc.id,
                             description: doc.data().description,
-                            userUid: doc.data().userUid
+                            userUid: doc.data().userUid,
+                            finished: doc.data().finished
                         })
                     })
 
                     console.log(lista)
                     setTarefas(lista)
                 })
+              
             }
 
         }
 
+
+
         loadTarefas()
 
     }, [])
-
 
     async function handleRegister(e) {
         e.preventDefault()
@@ -64,8 +65,8 @@ export default function Admin() {
             return
         }
 
-        if(edit?.id) {
-            handleUpdateTarefa()
+        if (edit?.id) {
+            handleUpdateTask()
             return
         }
 
@@ -78,7 +79,6 @@ export default function Admin() {
             .then(() => {
                 console.log("Tarefa Registrada")
                 setTarefaInput('')
-
             })
             .catch((error) => {
                 console.log("Error: " + error)
@@ -93,33 +93,44 @@ export default function Admin() {
     }
 
     function editTask(item) {
-        setTarefaInput(item.tarefa)
+        setTarefaInput(item.description)
         setEdit(item)
 
     }
 
-    async function handleUpdateTarefa() {
+    async function handleUpdateTask() {
         const docRef = doc(db, "tarefas", edit?.id)
         await updateDoc(docRef, {
-            tarefa: tarefaInput
+            description: tarefaInput
         })
-        .then(() => {
-            console.log("Tarefa Atualizada")
-            setTarefaInput('')
-            setEdit({})
-        })
-        .catch((error) => {
-            console.log(error)
-            setTarefaInput('')
-            setEdit({})
-        })
+            .then(() => {
+                console.log("Tarefa Atualizada")
+                setTarefaInput('')
+                setEdit({})
+            })
+            .catch((error) => {
+                console.log(error)
+                setTarefaInput('')
+                setEdit({})
+            })
 
     }
 
     async function finishTask(id) {
-
         const docRef = doc(db, "tarefas", id)
-        await deleteDoc(docRef)
+        await updateDoc(docRef, {
+            finished: new Date()
+        })
+            .then(() => {
+                console.log("Tarefa Concluida")
+                setTarefaInput('')
+                setEdit({})
+            })
+            .catch((error) => {
+                console.log(error)
+                setTarefaInput('')
+                setEdit({})
+            })
     }
 
     return (
@@ -133,17 +144,21 @@ export default function Admin() {
                     onChange={e => setTarefaInput(e.target.value)}
                     cols="80" rows="20" ></textarea>
 
-              {Object.keys(edit).length > 0 ? (
-                <button className='btn-register' style={{backgroundColor: '#6add39'}} type='submit'>Atualizar tarefa</button>
-              ) : (
-                <button className='btn-register' type='submit'>Cadastrar tarefa</button>
-              )} 
-              
+                {Object.keys(edit).length > 0 ? (
+                    <button className='btn-register' style={{ backgroundColor: '#6add39' }} type='submit'>Atualizar tarefa</button>
+                ) : (
+                    <button className='btn-register' type='submit'>Cadastrar tarefa</button>
+                )}
+
             </form>
+
+            <h2>Tarefas Pendentes</h2>
+
 
             {tarefas.map((item) => (
 
                 <article key={item.id} className='list'>
+
                     <p>{item.description}</p>
                     <div>
                         <button onClick={() => editTask(item)}>Editar</button>
@@ -152,7 +167,6 @@ export default function Admin() {
                 </article>
 
             ))}
-
 
             <button className='btn-logout' onClick={handleLogout}>Sair</button>
         </div>
