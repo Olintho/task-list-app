@@ -43,14 +43,13 @@ export default function Home() {
             <input 
                 autoComplete='false'
                 type="text" 
-                placeholder="Digite seu emelhor e-mail" 
+                placeholder="Digite seu e-mail" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
 
             <input 
                 type="password" 
-                placeholder="********" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
@@ -59,7 +58,7 @@ export default function Home() {
           </form>
 
           <Link to="/register" className="button-link">
-            Não possui uma conta? Cadastre-se.
+            Não possui uma conta? Cadastre-se aqui.
           </Link>
         </div>
     )
